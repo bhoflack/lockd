@@ -1,10 +1,9 @@
 from twisted.internet import protocol, reactor
-from twisted.protocols import basic
 from struct import unpack, pack
 from time import time
 import sys
 
-class LockdProtocol(basic.LineReceiver):
+class LockdProtocol(protocol.Protocol):
 
     def dataReceived(self, line):
         (code, file) = unpack('i255sx', line)
