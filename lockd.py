@@ -10,9 +10,9 @@ class LockdProtocol(basic.LineReceiver):
         (code, file) = unpack('i255sx', line)
         success = True
         if code == 0:
-            success = self.factory.lockmanager.lock(file)
+            success = self.factory.lock(file)
         elif code == 1:
-            self.factory.lockmanager.unlock(file)
+            self.factory.unlock(file)
         
         if success:
             self.transport.write(pack('i', 0))
@@ -26,7 +26,7 @@ class LockdFactory(protocol.ServerFactory):
         self.lockmanager = LockManager()
 
     def lock(self, file):
-        self.lockmanager.lock(file)
+        return self.lockmanager.lock(file)
 
     def unlock(self, file):
         self.lockmanager.unlock(file)
