@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from twisted.internet import protocol, reactor
 from struct import unpack, pack
 from time import time
@@ -54,8 +56,7 @@ class LockManager:
            False
 
            An expired lock should be released.
-           >>> l.locks['expired'] = 1
-           
+           >>> l.locks['expired'] = 1           
            >>> l.lock('expired')
            True
         """
