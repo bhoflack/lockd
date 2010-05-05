@@ -4,6 +4,14 @@ from twisted.internet import protocol, reactor
 from struct import unpack, pack
 from time import time
 import sys
+import logging
+import logging.config
+
+LOG_FILENAME = '/var/log/lockd.log'
+
+# Timeout in milliseconds.
+TIMEOUT = 250
+logger = None
 
 class LockdProtocol(protocol.Protocol):
 
@@ -63,7 +71,9 @@ class LockManager:
         if self.locks.has_key(file):
             t = self.locks[file]
             diff = time() - t
-            if diff * 100 < 25:
+            if diff * 1000 < TIMEOUT:
+                if logger:
+		  logger.warn("Lock expired,  the difference is %s ms" % (diff * 100))
                 return False
             else:
                 return True
@@ -90,9 +100,16 @@ class LockManager:
             del self.locks[file]
         
 if __name__ == '__main__':
+    
     if len(sys.argv) > 1 and sys.argv[1] == 'test':
         import doctest
         doctest.testmod()
     else:
+	logger = logging.getLogger('lockd')
+	logger.setLevel(logging.WARN)
+	handler = logging.handlers.RotatingFileHandler(
+        	      LOG_FILENAME, maxBytes=20000000, backupCount=5)
+	logger.addHandler(handler)
+
         reactor.listenTCP(1500, LockdFactory())
         reactor.run()
