@@ -11,7 +11,7 @@ import logging.config
 LOG_FILENAME = '/var/log/lockd.log'
 
 # Timeout in milliseconds.
-TIMEOUT = 250
+TIMEOUT = 5000
 logger = None
 
 class LockdProtocol(protocol.Protocol):
