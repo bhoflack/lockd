@@ -3,6 +3,7 @@
 from twisted.internet import protocol, reactor
 from struct import unpack, pack
 from time import time
+from datetime import datetime
 import sys
 import logging
 import logging.config
@@ -75,7 +76,7 @@ class LockManager:
                 return False
             else:
                 if logger:
-		  logger.warn("Lock expired for file %s,  the difference is %s ms." % (file, diff))
+		  logger.warn("%s: Lock expired for file %s,  the difference is %s ms." % (datetime.now().isoformat(), file, diff))
                 return True
         self.locks[file] = time()
         return True
