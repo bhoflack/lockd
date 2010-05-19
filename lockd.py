@@ -72,10 +72,10 @@ class LockManager:
             t = self.locks[file]
             diff = time() - t
             if diff * 1000 < TIMEOUT:
-                if logger:
-		  logger.warn("Lock expired for file %s,  the difference is %s ms." % (file, diff * 100))
                 return False
             else:
+                if logger:
+		  logger.warn("Lock expired for file %s,  the difference is %s ms." % (file, diff))
                 return True
         self.locks[file] = time()
         return True
