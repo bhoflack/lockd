@@ -100,6 +100,11 @@ class LockManager:
         if self.locks.has_key(file):
             del self.locks[file]
         
+def writePid(path):
+    pidfile = open(path)
+    pidfile.write("%s" % os.getpid())
+    pidfile.close()
+
 if __name__ == '__main__':
     
     if len(sys.argv) > 1 and sys.argv[1] == 'test':

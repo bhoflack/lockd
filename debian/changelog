@@ -1,0 +1,5 @@
+lockd (1.0.0-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Brecht Hoflack <brh@unknown>  Fri, 04 Jun 2010 14:58:03 +0200

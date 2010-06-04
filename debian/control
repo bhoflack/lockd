@@ -1,0 +1,15 @@
+Source: lockd
+Section: optional
+Priority: extra
+Maintainer: Brecht Hoflack <brh@unknown>
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.8.3
+Homepage: http://intranet.melexis.com/supporting-functions/it/products/bigpile/lockd 
+
+Package: lockd
+Architecture: all
+Depends: ${misc:Depends}, python-twisted-core
+Description: Lockmanager for melexis testprograms.
+ Lockd is a server process that will manage the melexis testprograms
+ that try to access a file.  It is bullshit and should be replaced as soon
+ as possible.
