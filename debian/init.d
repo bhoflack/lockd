@@ -52,9 +52,9 @@ running()
 # (works for all users)
 
     # No pidfile, probably no daemon present
+    sleep 1
     [ ! -f "$PIDFILE" ] && return 1
     # Obtain the pid and check it against the binary name
-    sleep 1
     pid=`cat $PIDFILE`
     running_pid $pid $PYTHON_DAEMON || return 1
     return 0
@@ -98,7 +98,7 @@ case "$1" in
         ;;
   stop)
         echo -n "Stopping $DESC: "
-        start-stop-daemon --stop --quiet --pidfile $PIDFILE 
+        start-stop-daemon --stop --quiet --pidfile $PIDFILE || rm -f $PIDFILE
 	echo "$NAME."
         ;;
   force-stop)
