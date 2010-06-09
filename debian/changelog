@@ -1,3 +1,9 @@
+lockd (1.0.1-1ubuntu1) lucid; urgency=low
+
+  * Changed dependency to python-twisted.
+
+ -- Brecht Hoflack <brh@brh-laptop>  Wed, 09 Jun 2010 13:44:42 +0200
+
 lockd (1.0.0-1) unstable; urgency=low
 
   * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>

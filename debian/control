@@ -8,7 +8,7 @@ Homepage: http://intranet.melexis.com/supporting-functions/it/products/bigpile/l
 
 Package: lockd
 Architecture: all
-Depends: ${misc:Depends}, python-twisted-core
+Depends: ${misc:Depends}, python-twisted
 Description: Lockmanager for melexis testprograms.
  Lockd is a server process that will manage the melexis testprograms
  that try to access a file.  It is bullshit and should be replaced as soon
