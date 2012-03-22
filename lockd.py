@@ -16,104 +16,104 @@ logger = None
 
 class LockdProtocol(protocol.Protocol):
 
-    def dataReceived(self, line):
-        (code, file) = unpack('i255sx', line)
-        success = True
-        if code == 0:
-            success = self.factory.lock(file)
-        elif code == 1:
-            self.factory.unlock(file)
-        
-        if success:
-            self.transport.write(pack('i', 0))
-        else:
-            self.transport.write(pack('i', 1))
+  def dataReceived(self, line):
+    (code, file) = unpack('i255sx', line)
+    success = True
+    if code == 0:
+      success = self.factory.lock(file)
+    elif code == 1:
+      self.factory.unlock(file)
+
+    if success:
+      self.transport.write(pack('i', 0))
+    else:
+      self.transport.write(pack('i', 1))
 
 class LockdFactory(protocol.ServerFactory):
-    protocol = LockdProtocol
+  protocol = LockdProtocol
 
-    def __init__(self):
-        self.lockmanager = LockManager()
+  def __init__(self):
+    self.lockmanager = LockManager()
 
-    def lock(self, file):
-        return self.lockmanager.lock(file)
+  def lock(self, file):
+    return self.lockmanager.lock(file)
 
-    def unlock(self, file):
-        self.lockmanager.unlock(file)
+  def unlock(self, file):
+    self.lockmanager.unlock(file)
 
 class LockManager:
 
-    def __init__(self):
-        self.locks = {}
+  def __init__(self):
+    self.locks = {}
 
-    def lock(self, file):
-        """Request a lock on a file.
+  def lock(self, file):
+    """Request a lock on a file.
 
-           @param file the file that should be locked.
-           @returns True the file was locked.
-                    False the file could not be locked.
+         @param file the file that should be locked.
+         @returns True the file was locked.
+                  False the file could not be locked.
 
-           Create a lock manager.
-           >>> l = LockManager()
+       Create a lock manager.
+       >>> l = LockManager()
 
-           Request a lock on a file.
-           >>> l.lock('my file')
-           True
+       Request a lock on a file.
+       >>> l.lock('my file')
+       True
 
-           Now request a lock on the same file.
-           >>> l.lock('my file')
-           False
+       Now request a lock on the same file.
+       >>> l.lock('my file')
+       False
 
-           An expired lock should be released.
-           >>> l.locks['expired'] = 1           
-           >>> l.lock('expired')
-           True
-        """
-        if self.locks.has_key(file):
-            t = self.locks[file]
-            diff = time() - t
-            if diff * 1000 < TIMEOUT:
-                return False
-            else:
-                if logger:
-		  logger.warn("%s: Lock expired for file %s,  the difference is %s ms." % (datetime.now().isoformat(), file, diff))
-                return True
-        self.locks[file] = time()
+       An expired lock should be released.
+       >>> l.locks['expired'] = 1
+       >>> l.lock('expired')
+       True
+    """
+    if self.locks.has_key(file):
+      t = self.locks[file]
+      diff = time() - t
+      if diff * 1000 < TIMEOUT:
+        return False
+      else:
+        if logger:
+          logger.warn("%s: Lock expired for file %s,  the difference is %s ms." % (datetime.now().isoformat(), file, diff))
         return True
+    self.locks[file] = time()
+    return True
 
-    def unlock(self, file):
-        """Request to unlock a file.
+  def unlock(self, file):
+    """Request to unlock a file.
 
-           @param file the file to unlock
-           
-           Create a lock manager.
-           >>> l = LockManager()
-           >>> l.lock('lock')
-           True
-           >>> l.unlock('lock')
-           >>> l.lock('lock')
-           True
+         @param file the file to unlock
 
-           Unlock a unknown file.
-           >>> l.unlock('unknown')
-        """
-        if self.locks.has_key(file):
-            del self.locks[file]
+       Create a lock manager.
+       >>> l = LockManager()
+       >>> l.lock('lock')
+       True
+       >>> l.unlock('lock')
+       >>> l.lock('lock')
+       True
+
+       Unlock a unknown file.
+       >>> l.unlock('unknown')
+    """
+    if self.locks.has_key(file):
+      del self.locks[file]
 
 def writePid(path):
-    pidfile = open(path)
-    pidfile.write("%s" % os.getpid())
-    pidfile.close()
+  pidfile = open(path)
+  pidfile.write("%s" % os.getpid())
+  pidfile.close()
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == 'test':
-        import doctest
-        doctest.testmod()
-    else:
-	logger = logging.getLogger('lockd')
-	logger.setLevel(logging.WARN)
-	handler = logging.handlers.RotatingFileHandler(
-        	      LOG_FILENAME, maxBytes=20000000, backupCount=5)
-	logger.addHandler(handler)
+  if len(sys.argv) > 1 and sys.argv[1] == 'test':
+    import doctest
+    doctest.testmod()
+  else:
+    logger = logging.getLogger('lockd')
+    logger.setLevel(logging.WARN)
+    handler = logging.handlers.RotatingFileHandler(
+                  LOG_FILENAME, maxBytes=20000000, backupCount=5)
+    logger.addHandler(handler)
     reactor.listenTCP(1500, LockdFactory(), backlog=1000)
     reactor.run()
