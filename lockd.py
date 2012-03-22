@@ -95,18 +95,17 @@ class LockManager:
            True
 
            Unlock a unknown file.
-           >>> l.unlock('unknown')        
+           >>> l.unlock('unknown')
         """
         if self.locks.has_key(file):
             del self.locks[file]
-        
+
 def writePid(path):
     pidfile = open(path)
     pidfile.write("%s" % os.getpid())
     pidfile.close()
 
 if __name__ == '__main__':
-    
     if len(sys.argv) > 1 and sys.argv[1] == 'test':
         import doctest
         doctest.testmod()
@@ -116,6 +115,5 @@ if __name__ == '__main__':
 	handler = logging.handlers.RotatingFileHandler(
         	      LOG_FILENAME, maxBytes=20000000, backupCount=5)
 	logger.addHandler(handler)
-
-        reactor.listenTCP(1500, LockdFactory())
-        reactor.run()
+    reactor.listenTCP(1500, LockdFactory(), backlog=1000)
+    reactor.run()
